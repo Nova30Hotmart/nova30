@@ -1,0 +1,1603 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="theme-color" content="#0D0D0D">
+<title>NOVA 30 — Hotmart</title>
+
+<style>
+  /* ═════════════ FUENTES HOTMART ═════════════ */
+  @font-face { font-family: 'Hotmart Display'; src: url('./fonts/HotmartDisplay-Regular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Hotmart Sans'; src: url('./fonts/HotmartSansLight.woff2') format('woff2'); font-weight: 300; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Hotmart Sans'; src: url('./fonts/HotmartSansRegular.woff2') format('woff2'); font-weight: 400; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Hotmart Sans'; src: url('./fonts/HotmartSansBold.woff2') format('woff2'); font-weight: 700; font-style: normal; font-display: swap; }
+  @font-face { font-family: 'Hotmart Sans'; src: url('./fonts/HotmartSans-Italic.woff2') format('woff2'); font-weight: 400; font-style: italic; font-display: swap; }
+
+  /* ═════════════ DESIGN SYSTEM ═════════════ */
+  :root {
+    --hotmart-orange: #FF4000;
+    --hotmart-orange-hover: #FF5722;
+    --hotmart-orange-soft: rgba(255, 64, 0, 0.12);
+    --hotmart-black: #0D0D0D;
+    --hotmart-off-white: #F5F3EF;
+    --hotmart-maroon: #3E0F1D;
+    --hotmart-yellow: #FFD450;
+    --hotmart-grey: #C3BFB8;
+    --bg: #0D0D0D;
+    --bg-elevated: #1A1A1A;
+    --bg-card: #161616;
+    --border: rgba(245, 243, 239, 0.08);
+    --border-strong: rgba(245, 243, 239, 0.18);
+    --text-primary: #F5F3EF;
+    --text-secondary: rgba(245, 243, 239, 0.65);
+    --text-tertiary: rgba(245, 243, 239, 0.4);
+    --tag-digital: #6366F1;
+    --tag-presencial: #10B981;
+    --tag-hotseat: #F59E0B;
+    --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem;
+    --space-4: 2rem; --space-5: 3rem; --space-6: 4rem; --space-7: 6rem;
+    --radius-sm: 6px; --radius-md: 12px; --radius-lg: 20px;
+    --font-display: 'Hotmart Display', Georgia, serif;
+    --font-sans: 'Hotmart Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: var(--font-sans); font-weight: 400;
+    background: var(--bg); color: var(--text-primary);
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh; overflow-x: hidden;
+  }
+  button { font-family: inherit; cursor: pointer; border: none; background: none; color: inherit; }
+  input, textarea, select { font-family: inherit; }
+  a { color: inherit; text-decoration: none; }
+  img, svg { display: block; max-width: 100%; }
+
+  .display { font-family: var(--font-display); font-weight: 400; letter-spacing: -0.01em; line-height: 1.05; }
+  .h1 { font-size: clamp(2.5rem, 6vw, 5rem); }
+  .h2 { font-size: clamp(2rem, 4.5vw, 3.5rem); }
+  .h3 { font-size: clamp(1.5rem, 3vw, 2.25rem); }
+  .eyebrow {
+    font-family: var(--font-sans); font-weight: 700; font-size: 0.75rem;
+    letter-spacing: 0.12em; text-transform: uppercase; color: var(--hotmart-orange);
+  }
+
+  ::-webkit-scrollbar { width: 8px; height: 8px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--hotmart-orange); }
+
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 var(--space-3); }
+  @media (min-width: 768px) { .container { padding: 0 var(--space-4); } }
+
+  .screen { display: none; min-height: 100vh; }
+  .screen.active { display: block; }
+
+  /* ═════════════ LOGIN / REGISTRO ═════════════ */
+  #screen-login {
+    display: none; min-height: 100vh;
+    align-items: center; justify-content: center;
+    padding: var(--space-3);
+    position: relative; overflow: hidden;
+  }
+  #screen-login.active { display: flex; }
+  .login-bg-shape {
+    position: absolute; width: 800px; height: 800px;
+    border-radius: 50%; background: var(--hotmart-orange);
+    filter: blur(120px); opacity: 0.18;
+    top: -300px; right: -300px; pointer-events: none;
+    animation: pulse 8s ease-in-out infinite;
+  }
+  .login-bg-shape-2 {
+    position: absolute; width: 500px; height: 500px;
+    border-radius: 50%; background: var(--hotmart-maroon);
+    filter: blur(100px); opacity: 0.4;
+    bottom: -200px; left: -200px; pointer-events: none;
+    animation: pulse 10s ease-in-out infinite reverse;
+  }
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.18; }
+    50% { transform: scale(1.1); opacity: 0.25; }
+  }
+  .login-card {
+    position: relative; z-index: 10;
+    width: 100%; max-width: 460px;
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5); backdrop-filter: blur(20px);
+  }
+  .login-brands {
+    display: flex; align-items: center; justify-content: center;
+    gap: var(--space-3);
+    margin-bottom: var(--space-5);
+    padding-bottom: var(--space-3);
+    border-bottom: 1px solid var(--border);
+  }
+  .login-brands img { height: 40px; width: auto; }
+  .login-brands .brand-2 { height: 34px; }
+  .brand-divider { width: 1px; height: 28px; background: var(--border-strong); }
+  .login-eyebrow { text-align: center; margin-bottom: var(--space-1); }
+  .login-title { text-align: center; margin-bottom: var(--space-1); }
+  .login-subtitle {
+    text-align: center; color: var(--text-secondary);
+    font-size: 0.95rem; margin-bottom: var(--space-4);
+  }
+  .login-tabs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+    background: var(--bg); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: 4px;
+    margin-bottom: var(--space-3);
+  }
+  .login-tab {
+    padding: 10px; border-radius: 8px;
+    font-weight: 700; font-size: 0.85rem;
+    color: var(--text-secondary); letter-spacing: 0.02em;
+    transition: all 0.2s;
+  }
+  .login-tab.active { background: var(--hotmart-orange); color: var(--hotmart-black); }
+  .login-tab:not(.active):hover { color: var(--text-primary); }
+  .login-form { display: none; animation: fadeIn 0.3s; }
+  .login-form.active { display: block; }
+  .input-group { margin-bottom: var(--space-2); }
+  .input-label {
+    display: block; font-size: 0.75rem; font-weight: 700;
+    color: var(--text-secondary); margin-bottom: 6px;
+    letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .input-field {
+    width: 100%; background: var(--bg);
+    border: 1.5px solid var(--border-strong);
+    border-radius: var(--radius-md);
+    padding: 13px 14px; color: var(--text-primary);
+    font-size: 0.95rem; transition: all 0.2s;
+  }
+  .input-field:focus { outline: none; border-color: var(--hotmart-orange); background: var(--bg-elevated); }
+  .input-field::placeholder { color: var(--text-tertiary); }
+  textarea.input-field { resize: vertical; min-height: 70px; font-family: inherit; }
+  .error-msg {
+    background: rgba(255, 64, 0, 0.1);
+    border: 1px solid var(--hotmart-orange);
+    color: var(--hotmart-orange);
+    padding: 11px 14px; border-radius: var(--radius-md);
+    font-size: 0.85rem; margin-bottom: var(--space-2);
+    display: none;
+  }
+  .error-msg.show { display: block; }
+  .btn-primary {
+    width: 100%; background: var(--hotmart-orange);
+    color: var(--hotmart-black);
+    font-weight: 700; font-size: 0.92rem;
+    letter-spacing: 0.04em; padding: 15px;
+    border-radius: var(--radius-md);
+    transition: all 0.2s; text-transform: uppercase;
+    margin-top: var(--space-1);
+  }
+  .btn-primary:hover { background: var(--hotmart-orange-hover); transform: translateY(-1px); }
+  .btn-link {
+    display: block; width: 100%; text-align: center;
+    color: var(--text-secondary); font-size: 0.85rem;
+    padding: var(--space-2) 0 0; transition: color 0.2s;
+  }
+  .btn-link:hover { color: var(--hotmart-orange); }
+
+  /* ═════════════ HEADER ═════════════ */
+  .app-header {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(13, 13, 13, 0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+  .app-header-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: var(--space-2) var(--space-3);
+    max-width: 1280px; margin: 0 auto;
+  }
+  .header-brands { display: flex; align-items: center; gap: var(--space-2); cursor: pointer; }
+  .header-brands img { height: 30px; width: auto; }
+  .header-brands .brand-2 { height: 26px; }
+  .header-divider { width: 1px; height: 28px; background: var(--border-strong); }
+  .header-user { display: flex; align-items: center; gap: var(--space-2); font-size: 0.85rem; color: var(--text-secondary); }
+  .header-logout {
+    color: var(--text-tertiary); font-size: 0.8rem;
+    padding: 6px 12px; border-radius: 6px; transition: all 0.2s;
+  }
+  .header-logout:hover { color: var(--hotmart-orange); background: var(--hotmart-orange-soft); }
+
+  /* ═════════════ TABS NAV ═════════════ */
+  .tabs-nav {
+    position: sticky; top: 56px; z-index: 99;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .tabs-nav::-webkit-scrollbar { display: none; }
+  .tabs-nav-inner { display: flex; max-width: 1280px; margin: 0 auto; padding: 0 var(--space-3); }
+  .tab-btn {
+    padding: 16px 18px; font-size: 0.85rem; font-weight: 700;
+    color: var(--text-tertiary); border-bottom: 2px solid transparent;
+    white-space: nowrap; transition: all 0.2s;
+    letter-spacing: 0.02em;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .tab-btn:hover { color: var(--text-primary); }
+  .tab-btn.active { color: var(--hotmart-orange); border-bottom-color: var(--hotmart-orange); }
+  .tab-btn .ico { width: 16px; height: 16px; flex-shrink: 0; }
+
+  .app-main { padding: var(--space-4) 0 var(--space-7); min-height: calc(100vh - 200px); }
+  .tab-pane { display: none; animation: fadeIn 0.4s ease; }
+  .tab-pane.active { display: block; }
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ═════════════ HERO HOME ═════════════ */
+  .hero {
+    background: var(--hotmart-orange); color: var(--hotmart-black);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5) var(--space-4);
+    margin-bottom: var(--space-4);
+    position: relative; overflow: hidden;
+  }
+  .hero-eyebrow {
+    font-size: 0.8rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: var(--space-2); opacity: 0.7;
+  }
+  .hero-title {
+    font-family: var(--font-display);
+    font-size: clamp(2.2rem, 5vw, 3.8rem);
+    line-height: 1; margin-bottom: var(--space-2);
+    letter-spacing: -0.02em;
+  }
+  .hero-sub { font-size: 1.05rem; max-width: 580px; line-height: 1.5; }
+  .hero-shape {
+    position: absolute; right: -80px; bottom: -80px;
+    width: 280px; height: 280px;
+    border-radius: 50%; background: var(--hotmart-maroon);
+    opacity: 0.5; pointer-events: none;
+  }
+  .hero-star {
+    position: absolute; right: 8%; top: 20%;
+    width: 60px; height: 60px; opacity: 0.3; pointer-events: none;
+  }
+
+  .section-header {
+    display: flex; align-items: baseline; justify-content: space-between;
+    margin-bottom: var(--space-3); gap: var(--space-2);
+  }
+  .section-title { font-family: var(--font-display); font-size: clamp(1.5rem, 3vw, 2rem); line-height: 1.1; }
+  .section-eyebrow {
+    font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    color: var(--hotmart-orange); margin-bottom: 8px;
+  }
+  .section-counter {
+    font-family: var(--font-display);
+    color: var(--text-tertiary); font-size: 1.1rem;
+  }
+
+  /* ═════════════ ANUNCIOS ═════════════ */
+  .announcements { display: grid; gap: var(--space-2); margin-bottom: var(--space-5); }
+  .announcement-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--hotmart-orange);
+    border-radius: var(--radius-md);
+    padding: var(--space-3); transition: all 0.2s;
+  }
+  .announcement-card:hover { border-color: var(--border-strong); transform: translateX(2px); }
+  .announcement-card.pinned {
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(255, 64, 0, 0.04) 100%);
+    border-left-color: var(--hotmart-yellow);
+  }
+  .announcement-meta {
+    display: flex; align-items: center; gap: 8px;
+    margin-bottom: 8px;
+    font-size: 0.75rem; color: var(--text-tertiary);
+  }
+  .pin-badge {
+    background: var(--hotmart-yellow); color: var(--hotmart-black);
+    padding: 2px 8px; border-radius: 4px;
+    font-weight: 700; font-size: 0.65rem;
+    letter-spacing: 0.06em; text-transform: uppercase;
+  }
+  .announcement-title { font-weight: 700; font-size: 1.05rem; margin-bottom: 6px; }
+  .announcement-msg {
+    color: var(--text-secondary); font-size: 0.92rem;
+    line-height: 1.55; margin-bottom: var(--space-2);
+  }
+  .announcement-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--hotmart-orange); color: var(--hotmart-black);
+    padding: 10px 18px; border-radius: var(--radius-md);
+    font-weight: 700; font-size: 0.85rem;
+    transition: all 0.2s; margin-top: 8px;
+  }
+  .announcement-cta:hover { background: var(--hotmart-orange-hover); transform: translateY(-1px); }
+
+  /* ═════════════ AGENDA ═════════════ */
+  .agenda-grid { display: grid; grid-template-columns: 1fr; gap: var(--space-2); }
+  @media (min-width: 768px) { .agenda-grid { grid-template-columns: repeat(2, 1fr); } }
+  
+  .event-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: var(--space-3);
+    transition: all 0.2s; position: relative; overflow: hidden;
+  }
+  .event-card::before {
+    content: ''; position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 3px; background: var(--hotmart-orange);
+  }
+  .event-card.past { opacity: 0.55; }
+  .event-card.past::before { background: var(--text-tertiary); }
+  .event-card.past:hover { opacity: 0.85; }
+  .event-card.next {
+    border-color: var(--hotmart-orange);
+    box-shadow: 0 0 0 1px var(--hotmart-orange), 0 8px 32px rgba(255, 64, 0, 0.15);
+  }
+  .event-card:hover:not(.past) { border-color: var(--hotmart-orange); transform: translateY(-2px); }
+  
+  .event-tag-row {
+    display: flex; gap: 8px; align-items: center;
+    margin-bottom: var(--space-2); flex-wrap: wrap;
+  }
+  .event-type-tag {
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 4px 10px; border-radius: 4px;
+    font-size: 0.7rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+  }
+  .event-type-tag.digital {
+    background: rgba(99, 102, 241, 0.15); color: var(--tag-digital);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+  }
+  .event-type-tag.presencial {
+    background: rgba(16, 185, 129, 0.15); color: var(--tag-presencial);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+  }
+  .event-type-tag.hotseat {
+    background: rgba(245, 158, 11, 0.15); color: var(--tag-hotseat);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+  }
+  .event-type-tag.reto {
+    background: var(--hotmart-orange-soft); color: var(--hotmart-orange);
+    border: 1px solid rgba(255, 64, 0, 0.3);
+  }
+  .event-status-tag {
+    padding: 4px 10px; border-radius: 4px;
+    font-size: 0.65rem; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    background: var(--bg-elevated); color: var(--text-tertiary);
+    border: 1px solid var(--border);
+  }
+  .event-status-tag.next {
+    background: var(--hotmart-orange); color: var(--hotmart-black);
+    border-color: var(--hotmart-orange);
+  }
+  .event-title { font-weight: 700; font-size: 1.15rem; line-height: 1.2; margin-bottom: 8px; }
+  .event-date { color: var(--hotmart-orange); font-weight: 700; font-size: 0.85rem; margin-bottom: 8px; }
+  .event-desc { color: var(--text-secondary); font-size: 0.88rem; line-height: 1.5; }
+
+  /* ═════════════ DIRECTORIO ═════════════ */
+  .directory-controls {
+    display: flex; flex-wrap: wrap; gap: var(--space-2);
+    margin-bottom: var(--space-3);
+    align-items: center; justify-content: space-between;
+  }
+  .search-bar { flex: 1; min-width: 220px; position: relative; }
+  .search-bar input {
+    width: 100%; background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 16px 10px 40px;
+    color: var(--text-primary); font-size: 0.9rem;
+  }
+  .search-bar input:focus { outline: none; border-color: var(--hotmart-orange); }
+  .search-bar .ico {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    width: 16px; height: 16px;
+    color: var(--text-tertiary);
+  }
+  .btn-secondary {
+    background: var(--hotmart-orange); color: var(--hotmart-black);
+    font-weight: 700; padding: 10px 18px;
+    border-radius: var(--radius-md); font-size: 0.85rem;
+    letter-spacing: 0.02em; transition: all 0.2s;
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .btn-secondary:hover { background: var(--hotmart-orange-hover); }
+
+  .members-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-2);
+  }
+  .member-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: var(--space-3);
+    transition: all 0.2s;
+    display: flex; flex-direction: column; gap: 8px;
+  }
+  .member-card:hover { border-color: var(--border-strong); transform: translateY(-2px); }
+  .member-header { display: flex; align-items: center; gap: 12px; margin-bottom: 4px; }
+  .member-avatar {
+    width: 44px; height: 44px; border-radius: 50%;
+    background: var(--hotmart-orange); color: var(--hotmart-black);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 1rem; flex-shrink: 0;
+  }
+  .member-name { font-weight: 700; font-size: 1rem; line-height: 1.2; }
+  .member-country { font-size: 0.8rem; color: var(--text-tertiary); margin-top: 2px; }
+  .member-skill {
+    background: var(--hotmart-orange-soft); color: var(--hotmart-orange);
+    padding: 4px 10px; border-radius: 4px;
+    font-size: 0.75rem; font-weight: 700;
+    align-self: flex-start;
+  }
+  .member-socials {
+    display: flex; gap: 8px;
+    margin-top: 8px; padding-top: var(--space-2);
+    border-top: 1px solid var(--border);
+  }
+  .member-socials a {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: var(--bg-elevated);
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .member-socials a:hover { background: var(--hotmart-orange); color: var(--hotmart-black); }
+  .member-socials .ico { width: 14px; height: 14px; }
+
+  /* ═════════════ LINKS ═════════════ */
+  .links-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: var(--space-2);
+  }
+  .link-card {
+    background: var(--bg-card); border: 1px solid var(--border);
+    border-radius: var(--radius-md); padding: var(--space-3);
+    transition: all 0.2s;
+    display: flex; align-items: flex-start; gap: var(--space-2);
+    text-decoration: none;
+  }
+  .link-card:hover {
+    border-color: var(--hotmart-orange);
+    background: linear-gradient(135deg, var(--bg-card) 0%, rgba(255, 64, 0, 0.04) 100%);
+    transform: translateY(-2px);
+  }
+  .link-emoji {
+    width: 44px; height: 44px; border-radius: var(--radius-sm);
+    background: var(--hotmart-orange); color: var(--hotmart-black);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.2rem; flex-shrink: 0;
+  }
+  .link-info { flex: 1; min-width: 0; }
+  .link-name { font-weight: 700; font-size: 0.95rem; margin-bottom: 2px; }
+  .link-desc { font-size: 0.82rem; color: var(--text-secondary); line-height: 1.4; }
+  .link-arrow { color: var(--text-tertiary); transition: transform 0.2s; }
+  .link-card:hover .link-arrow { color: var(--hotmart-orange); transform: translate(2px, -2px); }
+
+  /* ═════════════ RETO NOVA MUNDIAL — versión épica ═════════════ */
+  .reto-hero {
+    background: 
+      radial-gradient(circle at 20% 20%, rgba(255, 64, 0, 0.25) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(255, 212, 80, 0.18) 0%, transparent 45%),
+      linear-gradient(135deg, var(--hotmart-maroon) 0%, #1a0610 50%, var(--bg-card) 100%);
+    border: 1px solid rgba(255, 212, 80, 0.2);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5) var(--space-4);
+    margin-bottom: var(--space-5);
+    position: relative;
+    overflow: hidden;
+    text-align: center;
+  }
+  /* Confetti / partículas decorativas */
+  .reto-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle 2px at 15% 25%, var(--hotmart-yellow) 0%, transparent 100%),
+      radial-gradient(circle 1.5px at 30% 60%, var(--hotmart-orange) 0%, transparent 100%),
+      radial-gradient(circle 2px at 75% 30%, var(--hotmart-yellow) 0%, transparent 100%),
+      radial-gradient(circle 1.5px at 88% 75%, var(--hotmart-orange) 0%, transparent 100%),
+      radial-gradient(circle 1.5px at 50% 15%, var(--hotmart-yellow) 0%, transparent 100%),
+      radial-gradient(circle 2px at 45% 80%, var(--hotmart-orange) 0%, transparent 100%),
+      radial-gradient(circle 1px at 65% 55%, var(--hotmart-yellow) 0%, transparent 100%);
+    opacity: 0.6;
+    pointer-events: none;
+    animation: sparkle 4s ease-in-out infinite;
+  }
+  @keyframes sparkle {
+    0%, 100% { opacity: 0.4; }
+    50% { opacity: 0.8; }
+  }
+  /* Líneas tipo "rayos de estadio" */
+  .reto-hero::after {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: 50%;
+    width: 200%;
+    height: 200%;
+    background: 
+      conic-gradient(from 0deg at 50% 50%, 
+        transparent 0deg, 
+        rgba(255, 212, 80, 0.04) 30deg, 
+        transparent 60deg,
+        transparent 120deg,
+        rgba(255, 64, 0, 0.04) 150deg,
+        transparent 180deg,
+        transparent 240deg,
+        rgba(255, 212, 80, 0.04) 270deg,
+        transparent 300deg
+      );
+    transform: translateX(-50%);
+    pointer-events: none;
+    animation: rotate 60s linear infinite;
+  }
+  @keyframes rotate {
+    from { transform: translateX(-50%) rotate(0deg); }
+    to { transform: translateX(-50%) rotate(360deg); }
+  }
+  .reto-hero-content { position: relative; z-index: 2; }
+  
+  /* Trofeo grande con animación */
+  .reto-trophy-big {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto var(--space-3);
+    position: relative;
+    animation: trophyFloat 4s ease-in-out infinite;
+  }
+  @keyframes trophyFloat {
+    0%, 100% { transform: translateY(0) rotate(-2deg); }
+    50% { transform: translateY(-8px) rotate(2deg); }
+  }
+  .reto-trophy-big svg {
+    width: 100%;
+    height: 100%;
+    filter: drop-shadow(0 8px 24px rgba(255, 212, 80, 0.5));
+  }
+  
+  .reto-mundial-tag {
+    display: inline-block;
+    background: var(--hotmart-yellow);
+    color: var(--hotmart-black);
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-weight: 700;
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    box-shadow: 0 4px 16px rgba(255, 212, 80, 0.3);
+  }
+  
+  .reto-title-mundial {
+    font-family: var(--font-display);
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1;
+    margin-bottom: var(--space-2);
+    background: linear-gradient(180deg, var(--text-primary) 0%, var(--hotmart-orange) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+  
+  .reto-desc {
+    color: var(--text-secondary);
+    max-width: 580px;
+    margin: 0 auto;
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+  
+  /* ═════════════ PODIO DE GANADORES ═════════════ */
+  .winners-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    margin-top: var(--space-4);
+    align-items: stretch;
+  }
+  @media (min-width: 640px) {
+    .winners-grid { 
+      grid-template-columns: 1.05fr 0.95fr; 
+      gap: var(--space-3);
+    }
+  }
+  
+  .winner-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: var(--space-5) var(--space-3);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s;
+  }
+  
+  /* GOLD — Campeón */
+  .winner-card.gold {
+    background: 
+      radial-gradient(circle at 50% 0%, rgba(255, 212, 80, 0.25) 0%, transparent 60%),
+      linear-gradient(180deg, var(--hotmart-orange) 0%, var(--hotmart-maroon) 100%);
+    border: 2px solid var(--hotmart-yellow);
+    color: var(--hotmart-black);
+    box-shadow: 
+      0 20px 60px rgba(255, 64, 0, 0.3),
+      0 0 0 1px rgba(255, 212, 80, 0.3) inset;
+  }
+  .winner-card.gold::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: 
+      radial-gradient(circle 3px at 15% 20%, rgba(255, 255, 255, 0.4) 0%, transparent 100%),
+      radial-gradient(circle 2px at 80% 30%, rgba(255, 255, 255, 0.3) 0%, transparent 100%),
+      radial-gradient(circle 2.5px at 25% 70%, rgba(255, 255, 255, 0.35) 0%, transparent 100%),
+      radial-gradient(circle 2px at 75% 80%, rgba(255, 255, 255, 0.3) 0%, transparent 100%);
+    pointer-events: none;
+    animation: sparkle 3s ease-in-out infinite;
+  }
+  
+  /* SILVER — 2do lugar */
+  .winner-card.silver {
+    background: 
+      radial-gradient(circle at 50% 0%, rgba(245, 243, 239, 0.1) 0%, transparent 60%),
+      linear-gradient(180deg, #2a2a2a 0%, var(--bg-card) 100%);
+    border: 2px solid var(--hotmart-grey);
+    box-shadow: 0 12px 40px rgba(195, 191, 184, 0.08);
+  }
+  
+  .winner-card:hover { transform: translateY(-6px); }
+  .winner-card.gold:hover {
+    box-shadow: 
+      0 28px 80px rgba(255, 64, 0, 0.4),
+      0 0 0 1px rgba(255, 212, 80, 0.5) inset;
+  }
+  
+  /* Posición arriba */
+  .winner-rank {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-sans);
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 4px;
+    margin-bottom: var(--space-3);
+  }
+  .winner-card.gold .winner-rank {
+    background: rgba(13, 13, 13, 0.2);
+    color: var(--hotmart-black);
+    border: 1px solid rgba(13, 13, 13, 0.3);
+  }
+  .winner-card.silver .winner-rank {
+    background: rgba(245, 243, 239, 0.1);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-strong);
+  }
+  
+  /* Medalla grande con cinta */
+  .medal-container {
+    position: relative;
+    width: 130px;
+    height: 160px;
+    margin: 0 auto var(--space-3);
+  }
+  .medal-ribbon {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 80px;
+  }
+  .medal-ribbon svg {
+    width: 100%;
+    height: 100%;
+  }
+  .medal-circle {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+  }
+  .medal-circle.gold {
+    background: 
+      radial-gradient(circle at 30% 30%, #FFE680 0%, var(--hotmart-yellow) 40%, #E5A800 100%);
+    box-shadow: 
+      0 8px 32px rgba(255, 212, 80, 0.6),
+      0 0 0 3px rgba(255, 212, 80, 0.2);
+  }
+  .medal-circle.silver {
+    background: 
+      radial-gradient(circle at 30% 30%, #F8F8F8 0%, #E0E0E0 40%, #A8A8A8 100%);
+    box-shadow: 
+      0 6px 24px rgba(200, 200, 200, 0.4),
+      0 0 0 3px rgba(245, 243, 239, 0.15);
+  }
+  .medal-number {
+    font-family: var(--font-display);
+    font-size: 3.2rem;
+    color: var(--hotmart-black);
+    font-weight: 400;
+    line-height: 1;
+  }
+  
+  .winner-name {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(1.6rem, 3.2vw, 2.3rem);
+    line-height: 1;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+    word-break: break-word;
+  }
+  .winner-card.silver .winner-name { color: var(--text-primary); }
+  
+  .winner-edition {
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.7;
+  }
+
+  /* ═════════════ EMPTY STATES ═════════════ */
+  .empty-state {
+    text-align: center; padding: var(--space-6) var(--space-3);
+    color: var(--text-tertiary);
+    background: var(--bg-card);
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-lg);
+  }
+  .empty-state .ico {
+    width: 48px; height: 48px;
+    margin: 0 auto var(--space-2); opacity: 0.4;
+  }
+  .empty-state h3 {
+    font-family: var(--font-display); font-size: 1.3rem;
+    color: var(--text-secondary); margin-bottom: 8px;
+  }
+  .empty-state p { font-size: 0.9rem; max-width: 380px; margin: 0 auto; }
+
+  /* ═════════════ FOOTER ═════════════ */
+  .app-footer {
+    border-top: 1px solid var(--border);
+    padding: var(--space-4) 0; margin-top: var(--space-5);
+  }
+  .footer-inner {
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: var(--space-2);
+    max-width: 1280px; margin: 0 auto; padding: 0 var(--space-3);
+  }
+  .footer-tagline {
+    font-family: var(--font-display);
+    font-size: 1.5rem; color: var(--hotmart-orange);
+  }
+  .footer-tagline .dot { color: var(--hotmart-off-white); }
+  .footer-meta {
+    font-size: 0.78rem; color: var(--text-tertiary);
+    letter-spacing: 0.04em;
+  }
+
+  /* ═════════════ MODAL ═════════════ */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(13, 13, 13, 0.85);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none; align-items: center; justify-content: center;
+    padding: var(--space-3);
+  }
+  .modal-overlay.open { display: flex; animation: fadeIn 0.2s; }
+  .modal {
+    background: var(--bg-card);
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    width: 100%; max-width: 520px; max-height: 90vh;
+    overflow-y: auto; padding: var(--space-4);
+  }
+  .modal-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: var(--space-3);
+  }
+  .modal-title { font-family: var(--font-display); font-size: 1.6rem; }
+  .modal-close {
+    width: 32px; height: 32px; border-radius: 8px;
+    color: var(--text-secondary); transition: all 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .modal-close:hover { background: var(--bg-elevated); color: var(--hotmart-orange); }
+  .modal-actions { display: flex; gap: var(--space-2); margin-top: var(--space-3); }
+  .btn-ghost {
+    background: transparent;
+    border: 1.5px solid var(--border-strong);
+    color: var(--text-secondary);
+    padding: 14px 20px;
+    border-radius: var(--radius-md);
+    font-weight: 700; font-size: 0.85rem;
+    flex: 1; transition: all 0.2s;
+  }
+  .btn-ghost:hover { border-color: var(--hotmart-orange); color: var(--hotmart-orange); }
+  .form-row { display: grid; gap: var(--space-2); margin-bottom: var(--space-2); }
+  @media (min-width: 640px) {
+    .form-row.cols-2 { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ═════════════ TOAST ═════════════ */
+  #toast {
+    position: fixed; bottom: var(--space-4); left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--hotmart-off-white);
+    color: var(--hotmart-black);
+    padding: 14px 22px;
+    border-radius: var(--radius-md);
+    font-weight: 700; font-size: 0.9rem;
+    z-index: 1000;
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ═════════════ RESPONSIVE ═════════════ */
+  @media (max-width: 640px) {
+    .app-header-inner { padding: 12px var(--space-2); }
+    .header-brands img { height: 24px !important; }
+    .header-brands .brand-2 { height: 20px !important; }
+    .header-brands { gap: 10px; }
+    .header-divider { height: 20px; }
+    .header-user { font-size: 0.75rem; gap: 8px; }
+    .header-user #user-phone {
+      max-width: 90px;
+      overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .header-logout { padding: 4px 8px; font-size: 0.75rem; }
+    .hero { padding: var(--space-4) var(--space-3); }
+    .modal { padding: var(--space-3); }
+    .directory-controls { flex-direction: column; align-items: stretch; }
+    .btn-secondary { justify-content: center; }
+    .login-card { padding: var(--space-4) var(--space-3); }
+  }
+
+  .twinkle { animation: twinkle 3s ease-in-out infinite; }
+  @keyframes twinkle {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.92) rotate(15deg); }
+  }
+</style>
+</head>
+<body>
+
+<!-- SVG ICONS -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="ico-home" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M3 12 L12 3 L21 12 V20 A1 1 0 0 1 20 21 H4 A1 1 0 0 1 3 20 Z"/>
+      <path d="M9 21 V12 H15 V21"/>
+    </symbol>
+    <symbol id="ico-calendar" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="16" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/>
+      <line x1="8" y1="3" x2="8" y2="7"/><line x1="16" y1="3" x2="16" y2="7"/>
+    </symbol>
+    <symbol id="ico-users" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="9" cy="8" r="3.5"/>
+      <path d="M3 21 V19 A4 4 0 0 1 7 15 H11 A4 4 0 0 1 15 19 V21"/>
+      <circle cx="17" cy="9" r="2.5"/>
+      <path d="M21 17 V16 A3 3 0 0 0 18 13"/>
+    </symbol>
+    <symbol id="ico-link" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M10 14 L14 10"/>
+      <path d="M9 7 L13 3 A4 4 0 0 1 21 11 L17 15"/>
+      <path d="M15 17 L11 21 A4 4 0 0 1 3 13 L7 9"/>
+    </symbol>
+    <symbol id="ico-trophy" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8 21 H16 M12 17 V21 M7 4 H17 V11 A5 5 0 0 1 7 11 Z"/>
+      <path d="M7 7 H4 V9 A3 3 0 0 0 7 12 M17 7 H20 V9 A3 3 0 0 1 17 12"/>
+    </symbol>
+    <symbol id="ico-search" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16" y2="16"/>
+    </symbol>
+    <symbol id="ico-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+    </symbol>
+    <symbol id="ico-arrow-up-right" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="7" y1="17" x2="17" y2="7"/><polyline points="7,7 17,7 17,17"/>
+    </symbol>
+    <symbol id="ico-instagram" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="3" width="18" height="18" rx="5"/>
+      <circle cx="12" cy="12" r="4"/>
+      <circle cx="17.5" cy="6.5" r="0.5" fill="currentColor"/>
+    </symbol>
+    <symbol id="ico-whatsapp" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9s-.5-.1-.7.1c-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1s-1.2-.4-2.3-1.4c-.8-.7-1.4-1.6-1.6-1.9-.2-.3 0-.4.1-.6.1-.1.2-.3.4-.4.1-.1.2-.2.2-.4.1-.2 0-.3 0-.4 0-.1-.6-1.4-.8-2-.2-.5-.4-.4-.6-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2 0 1.3.9 2.5 1 2.7.1.2 1.8 2.7 4.3 3.8.6.3 1.1.4 1.4.5.6.2 1.2.2 1.6.1.5-.1 1.5-.6 1.7-1.2.2-.6.2-1.1.2-1.2-.1-.1-.2-.2-.5-.3zM12 3a9 9 0 0 0-7.6 13.8L3 21l4.3-1.4A9 9 0 1 0 12 3z"/>
+    </symbol>
+    <symbol id="ico-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3" y="5" width="18" height="14" rx="2"/>
+      <polyline points="3,7 12,13 21,7"/>
+    </symbol>
+    <symbol id="ico-youtube" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M21.6 7.2a2.5 2.5 0 0 0-1.8-1.8C18.3 5 12 5 12 5s-6.3 0-7.8.4a2.5 2.5 0 0 0-1.8 1.8C2 8.7 2 12 2 12s0 3.3.4 4.8a2.5 2.5 0 0 0 1.8 1.8C5.7 19 12 19 12 19s6.3 0 7.8-.4a2.5 2.5 0 0 0 1.8-1.8c.4-1.5.4-4.8.4-4.8s0-3.3-.4-4.8zM10 15V9l5 3-5 3z"/>
+    </symbol>
+    <symbol id="ico-edit" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M12 20h9"/>
+      <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+    </symbol>
+  </defs>
+</svg>
+
+<!-- LOGIN / REGISTRO -->
+<section id="screen-login" class="screen active">
+  <div class="login-bg-shape"></div>
+  <div class="login-bg-shape-2"></div>
+  
+  <div class="login-card">
+    <div class="login-brands">
+      <img src="./logos/nova30-transparent.png" alt="NOVA 30">
+      <div class="brand-divider"></div>
+      <img src="./logos/hotmart-negative.svg" alt="Hotmart" class="brand-2">
+    </div>
+
+    <div class="login-eyebrow eyebrow">Comunidad exclusiva</div>
+    <h1 class="display h2 login-title">Bienvenido</h1>
+    <p class="login-subtitle">La comunidad de los creadores hispanos de mayor impacto en Hotmart</p>
+
+    <div class="login-tabs">
+      <button class="login-tab active" onclick="switchLoginTab('signin', this)">Ingresar</button>
+      <button class="login-tab" onclick="switchLoginTab('signup', this)">Registrarme</button>
+    </div>
+
+    <div id="login-signin" class="login-form active">
+      <div id="signin-error" class="error-msg"></div>
+      <div class="input-group">
+        <label class="input-label" for="signin-phone">WhatsApp</label>
+        <input type="tel" id="signin-phone" class="input-field" placeholder="+52 55 1234 5678" autocomplete="tel">
+      </div>
+      <button class="btn-primary" onclick="handleSignIn()">Ingresar</button>
+      <a href="#" class="btn-link" onclick="handleGuest(); return false;">Solo ver la agenda →</a>
+    </div>
+
+    <div id="login-signup" class="login-form">
+      <div id="signup-error" class="error-msg"></div>
+      <div class="input-group">
+        <label class="input-label" for="signup-name">Nombre completo *</label>
+        <input type="text" id="signup-name" class="input-field" placeholder="Ej. Edgar Vergara">
+      </div>
+      <div class="form-row cols-2">
+        <div class="input-group">
+          <label class="input-label" for="signup-country">País *</label>
+          <input type="text" id="signup-country" class="input-field" placeholder="🇲🇽 México">
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="signup-skill">Tu súper poder *</label>
+          <input type="text" id="signup-skill" class="input-field" placeholder="Ej. Educación financiera">
+        </div>
+      </div>
+      <div class="input-group">
+        <label class="input-label" for="signup-phone">WhatsApp *</label>
+        <input type="tel" id="signup-phone" class="input-field" placeholder="+52 55 1234 5678">
+      </div>
+      <div class="form-row cols-2">
+        <div class="input-group">
+          <label class="input-label" for="signup-instagram">@ Instagram</label>
+          <input type="text" id="signup-instagram" class="input-field" placeholder="@usuario">
+        </div>
+        <div class="input-group">
+          <label class="input-label" for="signup-email">Email Hotmart</label>
+          <input type="email" id="signup-email" class="input-field" placeholder="tu@email.com">
+        </div>
+      </div>
+      <button class="btn-primary" onclick="handleSignUp()">Registrarme</button>
+    </div>
+  </div>
+</section>
+
+<!-- APP -->
+<section id="screen-app" class="screen">
+  <header class="app-header">
+    <div class="app-header-inner">
+      <div class="header-brands" id="header-brands">
+        <img src="./logos/nova30-transparent.png" alt="NOVA 30">
+        <div class="header-divider"></div>
+        <img src="./logos/hotmart-negative.svg" alt="Hotmart" class="brand-2">
+      </div>
+      <div class="header-user">
+        <span id="user-phone">+52 55 1234 5678</span>
+        <button class="header-logout" onclick="handleLogout()">Salir</button>
+      </div>
+    </div>
+  </header>
+
+  <nav class="tabs-nav">
+    <div class="tabs-nav-inner">
+      <button class="tab-btn active" onclick="switchTab('home', this)">
+        <svg class="ico"><use href="#ico-home"/></svg> Inicio
+      </button>
+      <button class="tab-btn" onclick="switchTab('agenda', this)">
+        <svg class="ico"><use href="#ico-calendar"/></svg> Agenda 2026
+      </button>
+      <button class="tab-btn" onclick="switchTab('directory', this)">
+        <svg class="ico"><use href="#ico-users"/></svg> Miembros
+      </button>
+      <button class="tab-btn" onclick="switchTab('links', this)">
+        <svg class="ico"><use href="#ico-link"/></svg> Links
+      </button>
+      <button class="tab-btn" onclick="switchTab('reto', this)">
+        <svg class="ico"><use href="#ico-trophy"/></svg> Reto NOVA
+      </button>
+    </div>
+  </nav>
+
+  <main class="app-main">
+    <div class="container">
+
+      <!-- HOME -->
+      <div id="tab-home" class="tab-pane active">
+        <div class="hero">
+          <div class="hero-eyebrow">La comunidad exclusiva</div>
+          <h1 class="hero-title">Los creadores hispanos<br>de mayor impacto<br>en Hotmart.</h1>
+          <p class="hero-sub">Bienvenido a NOVA 30. Aquí encontrarás todo lo que necesitas para conectar, crecer y conquistar nuevas órbitas en el universo digital.</p>
+          <svg class="hero-star twinkle" viewBox="0 0 60 60">
+            <path d="M30 0 L34 26 L60 30 L34 34 L30 60 L26 34 L0 30 L26 26 Z" fill="currentColor"/>
+          </svg>
+          <div class="hero-shape"></div>
+        </div>
+
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">Anuncios</div>
+            <h2 class="section-title">Lo último</h2>
+          </div>
+        </div>
+        
+        <div class="announcements">
+          <div class="announcement-card pinned">
+            <div class="announcement-meta">
+              <span class="pin-badge">★ Fijado</span>
+              <span>Próximo encuentro</span>
+            </div>
+            <h3 class="announcement-title">Encuentro NOVA 30 — Junio</h3>
+            <p class="announcement-msg">Todos los detalles del evento se les compartirán el día <strong>viernes 22 de mayo</strong>. Mantente atento a tu WhatsApp y correo.</p>
+          </div>
+          
+          <div class="announcement-card">
+            <div class="announcement-meta">
+              <span>Nuevo episodio disponible</span>
+            </div>
+            <h3 class="announcement-title">🎙️ Escucha Hotmart Cast en español</h3>
+            <p class="announcement-msg">Inspiración, estrategias y conversaciones reales con los creadores que están transformando el mercado hispano. Nuevos episodios cada semana en YouTube.</p>
+            <a href="https://www.youtube.com/@Hotmart-Espa%C3%B1ol/podcasts" target="_blank" rel="noopener" class="announcement-cta">
+              <svg style="width:16px;height:16px"><use href="#ico-youtube"/></svg>
+              Escuchar en YouTube
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- AGENDA -->
+      <div id="tab-agenda" class="tab-pane">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">2026</div>
+            <h2 class="display h2">Agenda del año</h2>
+          </div>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: var(--space-3); max-width: 600px;">Todos los encuentros y actividades del año.</p>
+        <div class="agenda-grid" id="agenda-list"></div>
+      </div>
+
+      <!-- DIRECTORIO -->
+      <div id="tab-directory" class="tab-pane">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">Miembros</div>
+            <h2 class="display h2">Directorio NOVA</h2>
+          </div>
+          <div class="section-counter" id="member-counter">0 miembros</div>
+        </div>
+
+        <div class="directory-controls">
+          <div class="search-bar">
+            <svg class="ico"><use href="#ico-search"/></svg>
+            <input type="text" id="member-search" placeholder="Buscar por nombre, país o habilidad..." oninput="filterMembers()">
+          </div>
+          <button class="btn-secondary" onclick="openProfileModal()">
+            <svg class="ico" style="width:14px;height:14px"><use href="#ico-edit"/></svg>
+            Editar mi perfil
+          </button>
+        </div>
+
+        <div class="members-grid" id="members-list"></div>
+      </div>
+
+      <!-- LINKS -->
+      <div id="tab-links" class="tab-pane">
+        <div class="section-header">
+          <div>
+            <div class="section-eyebrow">Recursos</div>
+            <h2 class="display h2">Links importantes</h2>
+          </div>
+        </div>
+        <p style="color: var(--text-secondary); margin-bottom: var(--space-3); max-width: 600px;">Acceso rápido a los recursos exclusivos para la comunidad NOVA 30.</p>
+
+        <div class="links-grid">
+          <a href="http://hotmart.com/club/nova30" target="_blank" rel="noopener" class="link-card">
+            <div class="link-emoji">🚀</div>
+            <div class="link-info">
+              <div class="link-name">Hotmart Club: NOVA 30</div>
+              <div class="link-desc">Materiales, grabaciones y recursos exclusivos del programa</div>
+            </div>
+            <svg class="link-arrow" style="width:16px;height:16px"><use href="#ico-arrow-up-right"/></svg>
+          </a>
+
+          <a href="https://www.youtube.com/@Hotmart-Espa%C3%B1ol/podcasts" target="_blank" rel="noopener" class="link-card">
+            <div class="link-emoji">🎙️</div>
+            <div class="link-info">
+              <div class="link-name">Hotmart Cast en español</div>
+              <div class="link-desc">Escucha nuestro podcast en YouTube</div>
+            </div>
+            <svg class="link-arrow" style="width:16px;height:16px"><use href="#ico-arrow-up-right"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- RETO NOVA MUNDIAL -->
+      <div id="tab-reto" class="tab-pane">
+        <div class="reto-hero">
+          <div class="reto-hero-content">
+            <!-- Trofeo grande dorado animado -->
+            <div class="reto-trophy-big">
+              <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                  <linearGradient id="trophyGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stop-color="#FFE680"/>
+                    <stop offset="40%" stop-color="#FFD450"/>
+                    <stop offset="100%" stop-color="#E5A800"/>
+                  </linearGradient>
+                  <linearGradient id="trophyShine" x1="0%" y1="0%" x2="100%" y2="100%">
+                    <stop offset="0%" stop-color="rgba(255,255,255,0.5)"/>
+                    <stop offset="50%" stop-color="rgba(255,255,255,0)"/>
+                  </linearGradient>
+                </defs>
+                <!-- Asas laterales -->
+                <path d="M22 28 Q14 32 14 42 Q14 52 24 54" fill="none" stroke="url(#trophyGrad)" stroke-width="4" stroke-linecap="round"/>
+                <path d="M78 28 Q86 32 86 42 Q86 52 76 54" fill="none" stroke="url(#trophyGrad)" stroke-width="4" stroke-linecap="round"/>
+                <!-- Copa principal -->
+                <path d="M24 20 L76 20 L74 50 Q74 65 50 68 Q26 65 26 50 Z" fill="url(#trophyGrad)" stroke="#E5A800" stroke-width="1.5"/>
+                <!-- Brillo en la copa -->
+                <path d="M30 24 L42 24 Q40 40 36 50" fill="url(#trophyShine)" opacity="0.8"/>
+                <!-- Tallo -->
+                <rect x="44" y="68" width="12" height="14" fill="url(#trophyGrad)"/>
+                <!-- Base -->
+                <rect x="30" y="80" width="40" height="6" rx="2" fill="url(#trophyGrad)" stroke="#E5A800" stroke-width="1"/>
+                <rect x="26" y="86" width="48" height="8" rx="3" fill="url(#trophyGrad)" stroke="#E5A800" stroke-width="1"/>
+                <!-- Estrella en el centro -->
+                <path d="M50 36 L52 42 L58 42 L53 46 L55 52 L50 48 L45 52 L47 46 L42 42 L48 42 Z" fill="#FF4000"/>
+              </svg>
+            </div>
+            
+            <span class="reto-mundial-tag">★ Edición Mundial 2026</span>
+            
+            <h2 class="reto-title-mundial">Reto NOVA Mundial</h2>
+            
+            <p class="reto-desc">Una competencia entre los creadores más destacados del ecosistema Hotmart. Estos son los ganadores de la edición 2026.</p>
+          </div>
+        </div>
+
+        <div class="winners-grid">
+          <!-- PRIMER LUGAR -->
+          <div class="winner-card gold">
+            <span class="winner-rank">★ Campeón</span>
+            <div class="medal-container">
+              <div class="medal-ribbon">
+                <svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="ribbonGold" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#FF4000"/>
+                      <stop offset="100%" stop-color="#3E0F1D"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M10 0 L25 0 L30 50 L20 60 L10 50 Z" fill="url(#ribbonGold)" opacity="0.9"/>
+                  <path d="M35 0 L50 0 L50 50 L40 60 L30 50 Z" fill="url(#ribbonGold)" opacity="0.85"/>
+                </svg>
+              </div>
+              <div class="medal-circle gold">
+                <span class="medal-number">1</span>
+              </div>
+            </div>
+            <div class="winner-name">Eleia</div>
+            <div class="winner-edition">Primer lugar</div>
+          </div>
+
+          <!-- SEGUNDO LUGAR -->
+          <div class="winner-card silver">
+            <span class="winner-rank">Segundo lugar</span>
+            <div class="medal-container">
+              <div class="medal-ribbon">
+                <svg viewBox="0 0 60 80" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="ribbonSilver" x1="0%" y1="0%" x2="0%" y2="100%">
+                      <stop offset="0%" stop-color="#888888"/>
+                      <stop offset="100%" stop-color="#3a3a3a"/>
+                    </linearGradient>
+                  </defs>
+                  <path d="M10 0 L25 0 L30 50 L20 60 L10 50 Z" fill="url(#ribbonSilver)" opacity="0.9"/>
+                  <path d="M35 0 L50 0 L50 50 L40 60 L30 50 Z" fill="url(#ribbonSilver)" opacity="0.85"/>
+                </svg>
+              </div>
+              <div class="medal-circle silver">
+                <span class="medal-number">2</span>
+              </div>
+            </div>
+            <div class="winner-name">Eduardo Vázquez</div>
+            <div class="winner-edition">Segundo lugar</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <div class="footer-tagline">Lo hacemos real<span class="dot">.</span></div>
+      <div class="footer-meta">NOVA 30 × Hotmart · 2026</div>
+    </div>
+  </footer>
+</section>
+
+<!-- MODAL DE PERFIL -->
+<div class="modal-overlay" id="modal-profile">
+  <div class="modal">
+    <div class="modal-header">
+      <h2 class="modal-title">Tu perfil NOVA</h2>
+      <button class="modal-close" onclick="closeModal('modal-profile')">
+        <svg style="width:20px;height:20px"><use href="#ico-close"/></svg>
+      </button>
+    </div>
+    <div class="input-group">
+      <label class="input-label">Nombre completo</label>
+      <input class="input-field" id="profile-name" type="text">
+    </div>
+    <div class="form-row cols-2">
+      <div class="input-group">
+        <label class="input-label">País</label>
+        <input class="input-field" id="profile-country" type="text">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Tu súper poder</label>
+        <input class="input-field" id="profile-skill" type="text">
+      </div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="input-group">
+        <label class="input-label">WhatsApp</label>
+        <input class="input-field" id="profile-whatsapp" type="tel" readonly style="opacity: 0.6;">
+      </div>
+      <div class="input-group">
+        <label class="input-label">@ Instagram</label>
+        <input class="input-field" id="profile-instagram" type="text">
+      </div>
+    </div>
+    <div class="input-group">
+      <label class="input-label">Email Hotmart</label>
+      <input class="input-field" id="profile-email" type="email">
+    </div>
+    <div class="input-group">
+      <label class="input-label">Mayor desafío actual</label>
+      <textarea class="input-field" id="profile-challenge" placeholder="Cuéntanos en qué estás trabajando..."></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-ghost" onclick="closeModal('modal-profile')">Cancelar</button>
+      <button class="btn-primary" onclick="saveProfile()" style="margin-top:0">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════════
+// DATA LAYER — localStorage por ahora, fácil de migrar a Firebase
+// ═══════════════════════════════════════════════════════════════════
+const Storage = {
+  getMembers() {
+    try { return JSON.parse(localStorage.getItem('nova30_members') || '[]'); }
+    catch(e) { return []; }
+  },
+  saveMembers(members) { localStorage.setItem('nova30_members', JSON.stringify(members)); },
+  addMember(member) {
+    const members = this.getMembers();
+    members.push(member);
+    this.saveMembers(members);
+  },
+  updateMember(whatsapp, updates) {
+    const members = this.getMembers();
+    const idx = members.findIndex(m => m.whatsapp === whatsapp);
+    if (idx !== -1) {
+      members[idx] = { ...members[idx], ...updates };
+      this.saveMembers(members);
+      return true;
+    }
+    return false;
+  },
+  findByWhatsapp(whatsapp) {
+    return this.getMembers().find(m => m.whatsapp === whatsapp);
+  },
+  getCurrentUser() {
+    try { return JSON.parse(localStorage.getItem('nova30_session') || 'null'); }
+    catch(e) { return null; }
+  },
+  setCurrentUser(user) { localStorage.setItem('nova30_session', JSON.stringify(user)); },
+  clearSession() { localStorage.removeItem('nova30_session'); }
+};
+
+function normalizePhone(p) { return (p || '').replace(/[\s\-\(\)]/g, '').trim(); }
+
+// AGENDA (luego se carga de Firebase)
+const TODAY = new Date('2026-05-18');
+const AGENDA = [
+  { type: 'reto', typeLabel: 'Reto NOVA', title: 'Reto NOVA', date: 'Marzo 2026', desc: 'Update #1 — posiciones parciales', timestamp: new Date('2026-03-15') },
+  { type: 'digital', typeLabel: 'Digital', title: 'Update Reto #2 + Encuentro Digital #1', date: 'Jue 9 abr · 10 AM MX | 11 AM COL', desc: 'De creador a CEO: contrataciones, liderazgo y equipo', timestamp: new Date('2026-04-09') },
+  { type: 'reto', typeLabel: 'Reto NOVA', title: 'Reto NOVA — Cierre', date: '15 mayo', desc: 'Anuncio de los 2 ganadores', timestamp: new Date('2026-05-15') },
+  { type: 'presencial', typeLabel: 'Presencial', title: 'Encuentro Presencial', date: 'Mié 24 jun · Fire Sessions Medellín', desc: 'Sesión presencial', timestamp: new Date('2026-06-24') },
+  { type: 'digital', typeLabel: 'Digital', title: 'Encuentro Digital #2', date: 'Jue 13 ago · 10 AM MX | 11 AM COL', desc: 'Ingresos predecibles: Evergreen y diversificación', timestamp: new Date('2026-08-13') },
+  { type: 'presencial', typeLabel: 'Presencial', title: 'Encuentro Presencial', date: 'Mié 9 sep · Fire Brasil – Oficinas Hotmart', desc: 'Sesión presencial', timestamp: new Date('2026-09-09') },
+  { type: 'digital', typeLabel: 'Digital', title: 'Encuentro Digital #3', date: 'Jue 8 oct · 10 AM MX | 11 AM COL', desc: 'Marca personal + negocio: audiencia sin sacrificar conversión', timestamp: new Date('2026-10-08') },
+  { type: 'hotseat', typeLabel: 'Hot Seat', title: 'Hot Seat Q4', date: 'Jue 12 nov · 10 AM MX | 11 AM COL', desc: 'Sesión digital dedicada', timestamp: new Date('2026-11-12') },
+  { type: 'digital', typeLabel: 'Digital', title: 'Encuentro Digital #4', date: 'Jue 10 dic · 10 AM MX | 11 AM COL', desc: 'Cierre 2026: resultados del año y visión 2027', timestamp: new Date('2026-12-10') },
+];
+
+let currentUser = null;
+
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.classList.remove('show'), 3000);
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function switchTab(name, btn) {
+  document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + name).classList.add('active');
+  if (btn) btn.classList.add('active');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+function switchLoginTab(name, btn) {
+  document.querySelectorAll('.login-form').forEach(f => f.classList.remove('active'));
+  document.querySelectorAll('.login-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('login-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+function showError(elId, msg) {
+  const el = document.getElementById(elId);
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function hideError(elId) { document.getElementById(elId).classList.remove('show'); }
+
+function handleSignIn() {
+  hideError('signin-error');
+  const phone = normalizePhone(document.getElementById('signin-phone').value);
+  if (phone.length < 7) { showError('signin-error', 'Ingresa un número de WhatsApp válido'); return; }
+  const member = Storage.findByWhatsapp(phone);
+  if (!member) { showError('signin-error', 'Número no registrado. Ve a la pestaña "Registrarme".'); return; }
+  currentUser = { whatsapp: phone, guest: false };
+  Storage.setCurrentUser(currentUser);
+  enterApp();
+  toast('Bienvenido de vuelta, ' + member.name);
+}
+
+function handleSignUp() {
+  hideError('signup-error');
+  const name = document.getElementById('signup-name').value.trim();
+  const country = document.getElementById('signup-country').value.trim();
+  const skill = document.getElementById('signup-skill').value.trim();
+  const phone = normalizePhone(document.getElementById('signup-phone').value);
+  const instagram = document.getElementById('signup-instagram').value.trim();
+  const email = document.getElementById('signup-email').value.trim();
+  
+  if (!name) { showError('signup-error', 'El nombre es obligatorio'); return; }
+  if (!country) { showError('signup-error', 'El país es obligatorio'); return; }
+  if (!skill) { showError('signup-error', 'Tu súper poder es obligatorio'); return; }
+  if (phone.length < 7) { showError('signup-error', 'WhatsApp inválido'); return; }
+  if (Storage.findByWhatsapp(phone)) {
+    showError('signup-error', 'Este WhatsApp ya está registrado. Inicia sesión.');
+    return;
+  }
+  
+  Storage.addMember({
+    name, country, skill, whatsapp: phone, instagram, email,
+    challenge: '', joinedAt: new Date().toISOString(),
+  });
+  
+  currentUser = { whatsapp: phone, guest: false };
+  Storage.setCurrentUser(currentUser);
+  toast('¡Bienvenido a NOVA 30, ' + name + '!');
+  enterApp();
+}
+
+function handleGuest() {
+  currentUser = { whatsapp: 'invitado', guest: true };
+  enterApp();
+}
+
+function handleLogout() {
+  currentUser = null;
+  Storage.clearSession();
+  document.getElementById('signin-phone').value = '';
+  showScreen('screen-login');
+}
+
+function enterApp() {
+  const label = currentUser.guest ? 'Invitado' : currentUser.whatsapp;
+  document.getElementById('user-phone').textContent = label;
+  showScreen('screen-app');
+  renderAll();
+}
+
+function openProfileModal() {
+  if (currentUser?.guest) {
+    toast('Regístrate para tener tu perfil');
+    return;
+  }
+  const member = Storage.findByWhatsapp(currentUser.whatsapp);
+  if (!member) return;
+  document.getElementById('profile-name').value = member.name || '';
+  document.getElementById('profile-country').value = member.country || '';
+  document.getElementById('profile-skill').value = member.skill || '';
+  document.getElementById('profile-whatsapp').value = member.whatsapp || '';
+  document.getElementById('profile-instagram').value = member.instagram || '';
+  document.getElementById('profile-email').value = member.email || '';
+  document.getElementById('profile-challenge').value = member.challenge || '';
+  openModal('modal-profile');
+}
+
+function saveProfile() {
+  const updates = {
+    name: document.getElementById('profile-name').value.trim(),
+    country: document.getElementById('profile-country').value.trim(),
+    skill: document.getElementById('profile-skill').value.trim(),
+    instagram: document.getElementById('profile-instagram').value.trim(),
+    email: document.getElementById('profile-email').value.trim(),
+    challenge: document.getElementById('profile-challenge').value.trim(),
+  };
+  if (!updates.name) { toast('El nombre es obligatorio'); return; }
+  Storage.updateMember(currentUser.whatsapp, updates);
+  toast('Perfil actualizado ✓');
+  closeModal('modal-profile');
+  renderMembers();
+}
+
+function getInitials(name) {
+  return (name || '?').split(' ').filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join('');
+}
+function escapeHtml(s) {
+  return String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function renderMembers() {
+  const list = Storage.getMembers();
+  const grid = document.getElementById('members-list');
+  const counter = document.getElementById('member-counter');
+  counter.textContent = list.length + (list.length === 1 ? ' miembro' : ' miembros');
+  
+  if (list.length === 0) {
+    grid.innerHTML = '<div class="empty-state" style="grid-column: 1 / -1;"><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="9" cy="8" r="3.5"/><path d="M3 21 V19 A4 4 0 0 1 7 15 H11 A4 4 0 0 1 15 19 V21"/></svg><h3>Aún no hay miembros</h3><p>Sé el primero en sumarte a la comunidad. Los nuevos miembros aparecerán aquí automáticamente al registrarse.</p></div>';
+    return;
+  }
+  
+  grid.innerHTML = list.map(m => {
+    const initials = getInitials(m.name);
+    const ig = m.instagram ? m.instagram.replace(/^@/, '') : '';
+    return '<div class="member-card" data-search="' + escapeHtml((m.name + ' ' + m.country + ' ' + m.skill).toLowerCase()) + '">' +
+      '<div class="member-header"><div class="member-avatar">' + escapeHtml(initials) + '</div>' +
+      '<div><div class="member-name">' + escapeHtml(m.name) + '</div>' +
+      '<div class="member-country">' + escapeHtml(m.country) + '</div></div></div>' +
+      '<span class="member-skill">' + escapeHtml(m.skill) + '</span>' +
+      '<div class="member-socials">' +
+      (m.whatsapp ? '<a href="https://wa.me/' + m.whatsapp.replace(/[^\d]/g,'') + '" target="_blank" title="WhatsApp"><svg class="ico"><use href="#ico-whatsapp"/></svg></a>' : '') +
+      (ig ? '<a href="https://instagram.com/' + escapeHtml(ig) + '" target="_blank" title="Instagram"><svg class="ico"><use href="#ico-instagram"/></svg></a>' : '') +
+      (m.email ? '<a href="mailto:' + escapeHtml(m.email) + '" title="Email"><svg class="ico"><use href="#ico-mail"/></svg></a>' : '') +
+      '</div></div>';
+  }).join('');
+}
+
+function filterMembers() {
+  const q = document.getElementById('member-search').value.toLowerCase();
+  document.querySelectorAll('.member-card').forEach(card => {
+    const text = card.dataset.search || '';
+    card.style.display = text.includes(q) ? '' : 'none';
+  });
+}
+
+function renderAgenda() {
+  const grid = document.getElementById('agenda-list');
+  const nextIdx = AGENDA.findIndex(e => e.timestamp > TODAY);
+  
+  grid.innerHTML = AGENDA.map((e, idx) => {
+    const isPast = e.timestamp < TODAY;
+    const isNext = idx === nextIdx;
+    const cardClass = isPast ? 'past' : (isNext ? 'next' : '');
+    let statusTag = '';
+    if (isPast) statusTag = '<span class="event-status-tag">Realizado</span>';
+    else if (isNext) statusTag = '<span class="event-status-tag next">Próximo</span>';
+    
+    return '<div class="event-card ' + cardClass + '">' +
+      '<div class="event-tag-row">' +
+      '<span class="event-type-tag ' + e.type + '">' + escapeHtml(e.typeLabel) + '</span>' +
+      statusTag + '</div>' +
+      '<div class="event-title">' + escapeHtml(e.title) + '</div>' +
+      '<div class="event-date">' + escapeHtml(e.date) + '</div>' +
+      '<div class="event-desc">' + escapeHtml(e.desc) + '</div></div>';
+  }).join('');
+}
+
+function renderAll() {
+  renderMembers();
+  renderAgenda();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = Storage.getCurrentUser();
+  if (saved) {
+    currentUser = saved;
+    enterApp();
+  }
+  document.getElementById('signin-phone').addEventListener('keydown', e => {
+    if (e.key === 'Enter') handleSignIn();
+  });
+  ['signup-name','signup-country','signup-skill','signup-phone','signup-instagram','signup-email'].forEach(id => {
+    document.getElementById(id).addEventListener('keydown', e => {
+      if (e.key === 'Enter') handleSignUp();
+    });
+  });
+});
+
+window.switchTab = switchTab;
+window.switchLoginTab = switchLoginTab;
+window.handleSignIn = handleSignIn;
+window.handleSignUp = handleSignUp;
+window.handleGuest = handleGuest;
+window.handleLogout = handleLogout;
+window.openProfileModal = openProfileModal;
+window.saveProfile = saveProfile;
+window.openModal = openModal;
+window.closeModal = closeModal;
+window.filterMembers = filterMembers;
+</script>
+
+</body>
+</html>
