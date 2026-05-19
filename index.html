@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -1316,34 +1317,74 @@
 
 <div id="toast"></div>
 
-<script>
+<script type="module">
 // ═══════════════════════════════════════════════════════════════════
-// DATA LAYER — localStorage por ahora, fácil de migrar a Firebase
+// FIREBASE SETUP
 // ═══════════════════════════════════════════════════════════════════
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { 
+  getDatabase, ref, push, set, get, onValue, update, query, orderByChild, equalTo
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBQ8j_IHmaadxVCZb5vrqLUDE98pNCQ4Lc",
+  authDomain: "nova30-app.firebaseapp.com",
+  databaseURL: "https://nova30-app-default-rtdb.firebaseio.com",
+  projectId: "nova30-app",
+  storageBucket: "nova30-app.firebasestorage.app",
+  messagingSenderId: "641218959748",
+  appId: "1:641218959748:web:2df7847e22e4f7d26f65d1"
+};
+
+const firebaseApp = initializeApp(firebaseConfig);
+const db = getDatabase(firebaseApp);
+
+// ═══════════════════════════════════════════════════════════════════
+// DATA LAYER — Firebase Realtime Database
+// ═══════════════════════════════════════════════════════════════════
+// Cache local de los miembros (se sincroniza en tiempo real con Firebase)
+let MEMBERS_CACHE = [];
+
 const Storage = {
+  // Lista en memoria de miembros (sincronizada con Firebase)
   getMembers() {
-    try { return JSON.parse(localStorage.getItem('nova30_members') || '[]'); }
-    catch(e) { return []; }
+    return MEMBERS_CACHE;
   },
-  saveMembers(members) { localStorage.setItem('nova30_members', JSON.stringify(members)); },
-  addMember(member) {
-    const members = this.getMembers();
-    members.push(member);
-    this.saveMembers(members);
+  
+  // Suscribirse a cambios en tiempo real
+  subscribeMembers(callback) {
+    const membersRef = ref(db, 'members');
+    onValue(membersRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      // Convertir objeto { id1: {...}, id2: {...} } a array
+      MEMBERS_CACHE = Object.entries(data).map(([id, member]) => ({ ...member, _id: id }));
+      callback(MEMBERS_CACHE);
+    });
   },
-  updateMember(whatsapp, updates) {
-    const members = this.getMembers();
-    const idx = members.findIndex(m => m.whatsapp === whatsapp);
-    if (idx !== -1) {
-      members[idx] = { ...members[idx], ...updates };
-      this.saveMembers(members);
-      return true;
-    }
-    return false;
+  
+  // Agregar un nuevo miembro
+  async addMember(member) {
+    const membersRef = ref(db, 'members');
+    const newRef = push(membersRef);
+    await set(newRef, member);
+    return newRef.key;
   },
+  
+  // Actualizar miembro existente
+  async updateMember(whatsapp, updates) {
+    const member = MEMBERS_CACHE.find(m => m.whatsapp === whatsapp);
+    if (!member || !member._id) return false;
+    const memberRef = ref(db, 'members/' + member._id);
+    await update(memberRef, updates);
+    return true;
+  },
+  
+  // Buscar por WhatsApp
   findByWhatsapp(whatsapp) {
-    return this.getMembers().find(m => m.whatsapp === whatsapp);
+    return MEMBERS_CACHE.find(m => m.whatsapp === whatsapp);
   },
+  
+  // Sesión actual (sigue siendo localStorage, es solo del navegador)
   getCurrentUser() {
     try { return JSON.parse(localStorage.getItem('nova30_session') || 'null'); }
     catch(e) { return null; }
@@ -1408,10 +1449,23 @@ function showError(elId, msg) {
 }
 function hideError(elId) { document.getElementById(elId).classList.remove('show'); }
 
-function handleSignIn() {
+async function handleSignIn() {
   hideError('signin-error');
   const phone = normalizePhone(document.getElementById('signin-phone').value);
   if (phone.length < 7) { showError('signin-error', 'Ingresa un número de WhatsApp válido'); return; }
+  
+  // Esperar a que los miembros estén cargados desde Firebase
+  if (MEMBERS_CACHE.length === 0) {
+    // Forzar lectura única si aún no hay cache
+    try {
+      const snapshot = await get(ref(db, 'members'));
+      const data = snapshot.val() || {};
+      MEMBERS_CACHE = Object.entries(data).map(([id, m]) => ({ ...m, _id: id }));
+    } catch(e) {
+      console.error('Error al cargar miembros:', e);
+    }
+  }
+  
   const member = Storage.findByWhatsapp(phone);
   if (!member) { showError('signin-error', 'Número no registrado. Ve a la pestaña "Registrarme".'); return; }
   currentUser = { whatsapp: phone, guest: false };
@@ -1420,7 +1474,7 @@ function handleSignIn() {
   toast('Bienvenido de vuelta, ' + member.name);
 }
 
-function handleSignUp() {
+async function handleSignUp() {
   hideError('signup-error');
   const name = document.getElementById('signup-name').value.trim();
   const country = document.getElementById('signup-country').value.trim();
@@ -1433,20 +1487,44 @@ function handleSignUp() {
   if (!country) { showError('signup-error', 'El país es obligatorio'); return; }
   if (!skill) { showError('signup-error', 'Tu súper poder es obligatorio'); return; }
   if (phone.length < 7) { showError('signup-error', 'WhatsApp inválido'); return; }
-  if (Storage.findByWhatsapp(phone)) {
-    showError('signup-error', 'Este WhatsApp ya está registrado. Inicia sesión.');
+  
+  // Verificar duplicado en Firebase
+  try {
+    const snapshot = await get(ref(db, 'members'));
+    const data = snapshot.val() || {};
+    const exists = Object.values(data).some(m => m.whatsapp === phone);
+    if (exists) {
+      showError('signup-error', 'Este WhatsApp ya está registrado. Inicia sesión.');
+      return;
+    }
+  } catch(e) {
+    console.error('Error verificando duplicado:', e);
+    showError('signup-error', 'Error de conexión. Intenta de nuevo.');
     return;
   }
   
-  Storage.addMember({
-    name, country, skill, whatsapp: phone, instagram, email,
-    challenge: '', joinedAt: new Date().toISOString(),
-  });
+  // Deshabilitar el botón mientras guarda
+  const btn = document.querySelector('#login-signup button.btn-primary');
+  const originalText = btn.textContent;
+  btn.textContent = 'Guardando...';
+  btn.disabled = true;
   
-  currentUser = { whatsapp: phone, guest: false };
-  Storage.setCurrentUser(currentUser);
-  toast('¡Bienvenido a NOVA 30, ' + name + '!');
-  enterApp();
+  try {
+    await Storage.addMember({
+      name, country, skill, whatsapp: phone, instagram, email,
+      challenge: '', joinedAt: new Date().toISOString(),
+    });
+    
+    currentUser = { whatsapp: phone, guest: false };
+    Storage.setCurrentUser(currentUser);
+    toast('¡Bienvenido a NOVA 30, ' + name + '!');
+    enterApp();
+  } catch(e) {
+    console.error('Error al registrar:', e);
+    showError('signup-error', 'Error al guardar. Intenta de nuevo.');
+    btn.textContent = originalText;
+    btn.disabled = false;
+  }
 }
 
 function handleGuest() {
@@ -1485,7 +1563,7 @@ function openProfileModal() {
   openModal('modal-profile');
 }
 
-function saveProfile() {
+async function saveProfile() {
   const updates = {
     name: document.getElementById('profile-name').value.trim(),
     country: document.getElementById('profile-country').value.trim(),
@@ -1495,10 +1573,16 @@ function saveProfile() {
     challenge: document.getElementById('profile-challenge').value.trim(),
   };
   if (!updates.name) { toast('El nombre es obligatorio'); return; }
-  Storage.updateMember(currentUser.whatsapp, updates);
-  toast('Perfil actualizado ✓');
-  closeModal('modal-profile');
-  renderMembers();
+  
+  try {
+    await Storage.updateMember(currentUser.whatsapp, updates);
+    toast('Perfil actualizado ✓');
+    closeModal('modal-profile');
+    // No hace falta llamar renderMembers — la suscripción en tiempo real lo hace solo
+  } catch(e) {
+    console.error('Error guardando perfil:', e);
+    toast('Error al guardar. Intenta de nuevo.');
+  }
 }
 
 function getInitials(name) {
@@ -1569,6 +1653,13 @@ function renderAll() {
   renderMembers();
   renderAgenda();
 }
+
+// Suscribirse a cambios de miembros en tiempo real (Firebase)
+Storage.subscribeMembers((members) => {
+  // Cada vez que cambien los miembros en Firebase, re-renderizar la grid
+  const membersGrid = document.getElementById('members-list');
+  if (membersGrid) renderMembers();
+});
 
 window.addEventListener('DOMContentLoaded', () => {
   const saved = Storage.getCurrentUser();
